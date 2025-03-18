@@ -1,2 +1,3 @@
 # GillespieModel
-A module to perform Gillespie simulation
+
+A module to perform Gillespie simulation in Python.
