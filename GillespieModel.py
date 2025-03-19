@@ -48,6 +48,13 @@ class GillespieModel:
     self.t = 0
     self.history = []
     self.add_to_history()
+
+  def reset(self):
+    for r in self.reactants:
+      r.reset()
+    self.t = 0
+    self.history = []
+    self.add_to_history()
     
   def add_to_history(self):
     self.history.append(self.get_state_and_time())
@@ -74,7 +81,9 @@ class GillespieModel:
       return True
     return False
   
-  def simulate(self,max_iter):
+  def simulate(self,max_iter,reset=False):
+    if reset:
+      self.reset()
     i = 0
     while self.iterate() and i < max_iter:
       i += 1
@@ -94,7 +103,9 @@ class GillespieModel:
     #   self.history = self.history[:-1]
     # return self.t
   
-  def simulateToTime(self,end_time):
+  def simulateToTime(self,end_time,reset=False):
+    if reset:
+      self.reset()
     at_least_one_iteration = False
     keep_going = True
     while (self.t <= end_time) and keep_going:
