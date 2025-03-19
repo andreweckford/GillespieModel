@@ -89,20 +89,7 @@ class GillespieModel:
       i += 1
     return i
 
-    # # we need the ability to rewind to the previous state as the last reaction will go past the end
-    # at_least_one_iteration = False
-    # keep_going = True
-    # while (self.t <= end_time) and keep_going:
-    #   at_least_one_iteration = True
-    #   last_state = self.s
-    #   keep_going = self.iterate()
-    # # this takes us past the last time instant, so ... if at least one iteration happened, rewind
-    # if at_least_one_iteration:
-    #   self.s = last_state
-    #   self.t = end_time # NOT the most recent time as we are simulating to the end ...
-    #   self.history = self.history[:-1]
-    # return self.t
-  
+  # Simulate up to the given time
   def simulateToTime(self,end_time,reset=False):
     if reset:
       self.reset()
