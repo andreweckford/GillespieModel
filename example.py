@@ -27,7 +27,7 @@ vol = 1000 # volume of the container, used to calculate concentration
 
 ##### set up the simulator
 
-# reactants - the string is the label that appears in the graph legend
+# reactants - the string is the label
 S = Reactant(initial_substrate,'Substrate')
 E = Reactant(initial_enzyme,'Enzyme')
 SE = Reactant(initial_intermediate,'Intermediate')
@@ -40,14 +40,12 @@ reactions = []
 # forward reaction S+E->SE - parameters are explained in detail here
 reactions.append(Reaction({
   #
-  # these have to be the Reactant objects in the reactants list
-  'reactants' : [S,E,SE], 
-  #
-  # concentrations to which the reaction is sensitive
-  # the rate is multiplied by the concentration of each item in the sensitivity list
-  # the number indicates the index in the 'reactants' list (here, S and E)
-  # if e.g. you need the square of the concentration, include the index in the sensitivity list twice
-  'sensitivity list' : [0,1],
+  # Reactants involved in the reaction
+  # Can be specified either using the reactant object itself, or by label
+  # When specifying by label, you must provide the all_reactants parameter, below
+  # In this case, the commented-out line should give the same behaviour, try it
+  'reactants' : ['Substrate','Enzyme','Intermediate'],
+  #'reactants' : [S,E,SE], 
   #
   # here, indicate the number of reactants involved in the reaction
   # this vector must be the same length as the 'reactants' vector, and the positions in the list correspond to those reactants
@@ -60,12 +58,13 @@ reactions.append(Reaction({
   #
   # volume - you need a volume to calculate concentration
   'volume' : vol
-}))
+},all_reactants=reactants))
 
+# For all the rest of the reactions, we specify the Reactant objects rather than labels
+# In these cases, you don't need to provide the all_reactants parameter to Reaction
 # backward reaction SE->S+E
 reactions.append(Reaction({
   'reactants' : [S,E,SE],
-  'sensitivity list' : [2],
   'stoichiometry matrix' : [1,1,-1],
   'rate' : s_e_se_backward_rate,
   'volume' : vol
@@ -74,7 +73,6 @@ reactions.append(Reaction({
 # production reaction SE->E+P
 reactions.append(Reaction({
   'reactants' : [SE,E,P],
-  'sensitivity list' : [0],
   'stoichiometry matrix' : [-1,1,1],
   'rate' : se_e_p_production_rate,
   'volume' : vol
@@ -83,7 +81,6 @@ reactions.append(Reaction({
 # substrate production
 reactions.append(Reaction({
   'reactants' : [S],
-  'sensitivity list' : [],
   'stoichiometry matrix' : [1],
   'rate' : s_creation_rate,
   'volume' : vol
@@ -92,7 +89,6 @@ reactions.append(Reaction({
 # product degradation
 reactions.append(Reaction({
   'reactants' : [P],
-  'sensitivity list' : [0],
   'stoichiometry matrix' : [-1],
   'rate' : p_degradation_rate,
   'volume' : vol
@@ -106,9 +102,14 @@ g.simulateToTime(4e6)
 g.plot()
 plt.show()
 
-# continue the simulation to time 8e6 and plot, retaining the state of the simulator
-# if you want to START OVER and simulate to 8e6, pass reset=True as a parameter to the function
+# continue the simulation to time 8e6 and plot, 
+# preserving the state of the simulator from the first simulation
 g.simulateToTime(8e6)
+
+# if you want to START OVER and simulate to 8e6, pass reset=True as a parameter to the function
+# as in the line below, commented out. If you uncomment the line below to try this,
+# You can leave the g.SimulateToTime(8e6) line above, that simulation is overwritten with the version below
+#g.simulateToTime(8e6,reset=True)
 
 g.plot()
 plt.show()

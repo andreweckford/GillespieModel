@@ -19,12 +19,37 @@ class Reactant:
     
 class Reaction:
   
-  def __init__(self,params):
-    self.reactants = params['reactants']
-    self.sensitivity_list = params['sensitivity list']
+  def __init__(self,params,all_reactants=None):
+    # assemble the reactant list - can either be Reactant objects or labels
+    # if the label isn't found, nothing is added to the reactant list
+    self.reactants = []
+    for i in range(len(params['reactants'])):
+      if (isinstance(params['reactants'][i],Reactant)):
+        self.reactants.append(params['reactants'][i])
+      else:
+        reactant_not_found = True # checks if we didn't find the reactant
+        if all_reactants is None:
+          raise ValueError('When specifying reactants by label, all_reactants must be given')
+        for r in all_reactants:
+          if r.label == params['reactants'][i]:
+            reactant_not_found = False
+            self.reactants.append(r)
+        if reactant_not_found:
+          raise ValueError('Reactant not found')
+
+    #self.reactants = params['reactants']
+    #self.sensitivity_list = params['sensitivity list']
     self.stoichiometry_matrix = params['stoichiometry matrix'] # vector, same length as reactants
     self.rate = params['rate']
     self.volume = params['volume']
+    # if the sensitivity list isn't provided, create it from the stoichiometry matrix
+    if 'sensitivity list' in params:
+      self.sensitivity_list = params['sensitivity list']
+    else:
+      self.sensitivity_list = []
+      for i in range(len(params['stoichiometry matrix'])):
+        if params['stoichiometry matrix'][i] < 0:
+          self.sensitivity_list += abs(params['stoichiometry matrix'][i]) * [i]
     
   def get_rate(self):
     r = self.rate
