@@ -37,8 +37,6 @@ class Reaction:
         if reactant_not_found:
           raise ValueError('Reactant not found')
 
-    #self.reactants = params['reactants']
-    #self.sensitivity_list = params['sensitivity list']
     self.stoichiometry_matrix = params['stoichiometry matrix'] # vector, same length as reactants
     self.rate = params['rate']
     self.volume = params['volume']
@@ -93,15 +91,10 @@ class GillespieModel:
     if r0 > 0:
       # perform the Gillespie simulation
       (v1,v2) = np.random.rand(2)
-      tau = 1/r0 * np.log(1/v1) # next reaction occurs at time tau
+      tau = 1/r0 * np.log(1/v1) # next reaction occurs after a wait of tau
       react = np.sum(np.cumsum(rate_v)/r0 <= v2) # identity of the reaction (starting at 0)
-
-      #if self.reactions[react] is r3:
-      #  print('r3')
-      
       self.reactions[react].do_reaction()
-      self.t += tau
-      
+      self.t += tau      
       self.add_to_history()
       return True
     return False
@@ -151,8 +144,10 @@ class GillespieModel:
       return np.vstack(allRows)
     return np.array([h['s'][index] for h in self.history])   
   
-  # the last reactant is normally the dummy reactant,
-  # if plotLast is false we don't plot it
+  # Plots all (or specified by index) reactants
+  # You can add custom colors if you want
+  # Legend comes from the labels associated with each reactant
+  # todo: specify reactants by label
   def plot(self,reactants=None,colors=None,legend=True):
     t = self.getTimeVector()
     m = self.getStateVector()
