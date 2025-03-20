@@ -21,7 +21,7 @@ class Reaction:
   
   def __init__(self,params,all_reactants=None):
     # assemble the reactant list - can either be Reactant objects or labels
-    # if the label isn't found, nothing is added to the reactant list
+    # if the label can't be found, a ValueError is raised
     self.reactants = []
     for i in range(len(params['reactants'])):
       if (isinstance(params['reactants'][i],Reactant)):
