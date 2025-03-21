@@ -127,6 +127,7 @@ class GillespieModel:
       self.history = self.history[:-1]
       
     self.t = end_time # no matter what, we end at the end_time
+    self.add_to_history() # make sure the history ends at the correct time - the state won't change but the time will
     return self.t
 
   # returns all event times as a numpy array
